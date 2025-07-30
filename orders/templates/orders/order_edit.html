@@ -1,0 +1,53 @@
+{% extends 'base/base.html' %}
+
+{% block title %}受注編集{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>受注編集</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+        {{ order_form.customer.label_tag }} {{ order_form.customer }}
+        </div>
+        <div class="mb-3">
+        {{ order_form.delivery.label_tag }} {{ order_form.delivery }}
+        </div>
+        
+        <h3 class="mt-4 mb-3">注文商品</h3>
+        {{ formset.management_form }}
+        {% for form in formset %}
+            <div class="border p-3 mb-3">
+                {{ form.id }}
+                <div class="mb-3">
+                {{ form.product.label_tag }} {{ form.product }}
+                </div>
+                <div class="mb-3">
+                {{ form.order_type.label_tag }} {{ form.order_type }}
+                </div>
+                <div class="mb-3">
+                {{ form.delivery_date.label_tag }} {{ form.delivery_date }}
+                </div>
+                <div class="mb-3">
+                {{ form.delivery_time.label_tag }} {{ form.delivery_time }}
+                </div>
+                <div class="mb-3">
+                {{ form.quantity.label_tag }} {{ form.quantity }}
+                </div>
+                <div class="mb-3">
+                {{ form.customer_order_number.label_tag }} {{ form.customer_order_number }}
+                </div>
+            
+            {% if form.instance.pk %}
+                <p>削除： {{ form.DELETE }}</p>
+            {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">更新</button>
+        <a href="{% url 'orders:order_detail' order.pk %}" class="btn btn-secondary">戻る</a>
+    </form>
+</div>
+{% endblock %}

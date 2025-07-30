@@ -1,0 +1,22 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ process.name }} のスケジュール日付一覧{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ process.name }} のスケジュール日付一覧</h2>
+    <ul class="list-group">
+        {% for date in scheduled_dates %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ date }}
+                <a href="{% url 'production_plan:schedule_by_process_date' pk=process.pk scheduled_date=date %}" class="btn btn-outline-primary">
+                    この日のスケジュールを編集
+                </a>
+            </li>
+        {% empty %}
+            <li class="list-group-item">この工程に紐づくスケジュールはまだありません。</li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}

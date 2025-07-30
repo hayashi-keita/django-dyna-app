@@ -1,0 +1,53 @@
+{% extends 'base/base.html' %}
+
+{% block title %}受注詳細{% endblock %}
+
+{% block content %}
+<h1>受注詳細</h1>
+
+<ul class="list-group mb-3">
+    <li class="list-group-item"><strong>受注No：</strong>{{ order.order_number }}</li>
+    <li class="list-group-item"><strong>得意先：</strong>{{ order.customer }}</li>
+    <li class="list-group-item"><strong>作成日：</strong>{{ order.created_at }}</li>
+    <li class="list-group-item"><strong>拠点：</strong>{{ order.location }}</li>
+    <li class="list-group-item"><strong>作成者：</strong>{{ order.created_by }}</li>
+</ul>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>製品</th>
+            <th>受注区分</th>
+            <th>納期</th>
+            <th>納入時間</th>
+            <th>数量</th>
+            <th>注文No</th>
+            <th>処理</th>
+        </tr>
+    </thead>
+<tbody>
+    {% for item in items %}
+        <tr>
+            <td>{{ item.product }}</td>
+            <td>{{ item.get_order_type_display }}</td>
+            <td>{{ item.delivery_date }}</td>
+            <td>{{ item.delivery_time }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.customer_order_number }}</td>
+            <td>
+                {% if item.pk %}
+                    <a href="{% url 'production_plan:orderitem_process_create' item.pk %}" class="btn btn-outline-primary">工程展開</a>
+                {% else %}
+                    <span class="text-muted">未登録</span>
+                {% endif %}
+            </td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="2">明細がありません</td></tr>
+    {% endfor %}
+</tbody>
+</table>
+
+<a href="{% url 'orders:order_edit' order.pk %}" class="btn btn-sm btn-info">編集</a>
+<a href="{% url 'orders:order_list' %}" class="btn btn-secondary">一覧へ戻る</a>
+{% endblock %}

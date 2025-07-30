@@ -1,0 +1,48 @@
+{% extends 'base/base.html' %}
+
+{% block title %}製品編集{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>製品編集</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend>製品情報</legend>
+            {{ product_form.as_p }}
+        </fieldset>
+        
+        <legend>工程情報</legend>
+        
+        <fieldset>  
+            {{ formset.management_form }}
+            {% for form in formset %}
+                {{ form.id }}
+                <div style="margin-bottom: 10px; border: 1px solid #ccc; padding: 10px">
+                    {% for field in form.visible_fields %}
+                        {% if field.name != 'DELETE' %}
+                            <div class="mb-2">
+                                {{ field.label_tag}} {{ field }}
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if form.instance.pk %}
+                        <div class="form-check">
+                            <label class="form-check-label">{{ form.DELETE }} 削除</label>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </fieldset>
+        <button type="submit" class="btn btn-primary">更新</button>
+    </form>
+</div>
+{% endblock %}

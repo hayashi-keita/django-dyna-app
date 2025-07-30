@@ -1,0 +1,52 @@
+{% extends 'base/base.html' %}
+
+{% block title %}生産計画{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>生産計画</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ formset.management_form }}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>工程</th>
+                    <th>日付</th>
+                    <th>順番</th>
+                    <th>備考</th>
+                    <th>削除</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                {% for form in formset %}
+                    <tr>
+                        {{ form.id }}
+                        <td>{{ form.instance.order_item_process.process.name }}</td>
+                        <td>{{ form.scheduled_date }}</td>
+                        <td>{{ form.instance.order_item_process.sequence }}</td>
+                        <td>{{ form.remarks }}</td>
+                        <td>{{ form.DELETE }}</td>
+                    </tr>
+                    {% if form.non_field_errors %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="text-danger">
+                                    {{ form.non_field_errors }}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">保存</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

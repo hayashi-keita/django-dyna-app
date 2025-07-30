@@ -1,0 +1,34 @@
+{% extends 'base/base.html' %}
+
+{% block title %}作業日設定: {{ order_item.product.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>製品名: {{ order_item.product.name }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ formset.management_form }}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>工程順序</th>
+                    <th>工程名</th>
+                    <th>作業日</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                {% for form in formset %}
+                    {{ form.id }}
+                    <tr>
+                        <td>{{ form.instance.sequence }}</td>
+                        <td>{{ form.instance.process.name }}</td>
+                        <td>{{ form.planned_start }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">保存</button>
+    </form>
+</div>
+{% endblock %}

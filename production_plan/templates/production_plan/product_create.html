@@ -1,0 +1,28 @@
+{% extends 'base/base.html' %}
+
+{% block title %}製品登録{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>製品登録</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend>製品情報</legend>
+            {{ product_form.as_p }}
+        </fieldset>
+
+        <fieldset>
+            <legend>工程情報</legend>
+            {{ formset.management_form }}
+            {% for form in formset %}
+                <div style="margin-bottom: 10px;">
+                    {{ form.as_p }}
+                </div>
+            {% endfor %}
+        </fieldset>
+        <button type="submit" class="btn btn-primary">登録</button>
+    </form>
+</div>
+{% endblock %}

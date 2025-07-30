@@ -1,0 +1,55 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ scheduled_date }} の生産スケジュール{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ process.name }} - 作業日 {{ scheduled_date }} のスケジュール</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>順序</th>
+                    <th>受注No</th>
+                    <th>製品名</th>
+                    <th>数量</th>
+                    <th>納期</th>
+                    <th>並び替え</th>
+                    <th>ステータス変更</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for process in schedules %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ process.order_item.order.order_number }}</td>
+                        <td>{{ process.order_item.product.name }}</td>
+                        <td>{{ process.order_item.quantity }}</td>
+                        <td>{{ process.order_item.delivery_date }}</td>
+                        
+                        <td>
+                            <input type="hidden" name="pks" value="{{ process.pk }}">
+                            <input type="number" name="display_order_{{ process.pk }}" 
+                                    value="{{ process.display_order }}" class="form-control" style="width: 80px;">
+                        </td>
+                        <td>
+                            <button  type="submit"
+                                    formaction="{% url 'production_plan:status_update' process.pk %}" 
+                                    class="btn btn-warning btn-sm">
+                                差立解除
+                            </button>                                
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5">この日の予定はありません。</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">順番を保存</button>
+    </form>
+</div>
+{% endblock %}

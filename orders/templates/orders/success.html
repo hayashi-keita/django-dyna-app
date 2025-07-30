@@ -1,0 +1,11 @@
+{% extends 'base/base.html' %}
+
+{% block title %}登録成功{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h2 class="mb-4">受注登録が完了しました。</h2>
+    <a href="{% url 'orders:order_list' %}" class="btn btn-primary">受注一覧へ</a>
+    <a href="{% url 'orders:order_create' %}" class="btn btn-secondary ml-2">続けて登録</a>
+</div>
+{% endblock %}

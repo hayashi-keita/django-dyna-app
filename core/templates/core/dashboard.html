@@ -1,0 +1,45 @@
+{% extends 'base/base.html' %}
+
+{% block title %}ダッシュボード{% endblock %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1 class="mb-3">📦 段ボール基幹システム ダッシュボード</h1>
+    <p class="text-muted">各種業務機能にアクセスできます</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">📋 受注管理</h5>
+                <p class="card-text">受注一覧や新規受注の登録ができます</p>
+                <a href="{% url 'orders:order_list' %}" class="btn btn-primary">受注一覧</a>
+                <a href="{% url 'orders:order_create' %}" class="btn btn-primary">受注作成</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">🏭 製品管理</h5>
+                <p class="card-text">製品情報や工程情報の登録・確認</p>
+                <a href="{% url 'production_plan:product_list' %}" class="btn btn-success">製品一覧</a>
+                <a href="{% url 'production_plan:product_create' %}" class="btn btn-success">製品登録</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">🔧 生産計画</h5>
+                <p class="card-text">受注に紐づく工程の展開や確認</p>
+                <a href="{% url 'production_plan:process_list' %}" class="btn btn-success">工程リスト</a>
+                <a href="{% url 'production_plan:orderitem_process_list_all' %}" class="btn btn-success">工程展開一覧</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

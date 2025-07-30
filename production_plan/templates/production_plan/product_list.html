@@ -1,0 +1,55 @@
+{% extends 'base/base.html' %}
+
+{% block title %}製品一覧{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">📦 製品一覧</h1>
+
+    <form method="get" class="mb-4 d-flex">
+        <input type="text" name="q" class="form-control me-2" placeholder="製品コードまたは製品名で検索" vallue="{{ request.GET.q }}">
+        <button type="submit" class="btn btn-primary">検索</button>
+    </form>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>製品コード</th>
+                <th>製品名</th>
+                <th>フルート</th>
+                <th>登録拠点</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in products %}
+                <tr>
+                    <td>{{ p.code }}</td>
+                    <td>{{ p.name }}</td>
+                    <td>{{ p.flute_type }}</td>
+                    <td>{{ p.location }}</td>
+                    <td><a href="{% url 'production_plan:product_update' p.pk %}" class="btn btn-sm btn-warning">編集</a></td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4" class="text-center text-muted">製品がまだ登録されていません</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">TOPへ戻る</a>
+
+    {% if is_paginated %}
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">最初</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">前へ</a></li>
+                {% endif %}
+                <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">次へ</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">最後</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock %}

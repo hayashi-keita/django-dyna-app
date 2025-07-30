@@ -1,0 +1,10 @@
+{% extends 'base/base.html' %}
+
+{% block title %}登録成功{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h2 class="mb-4">製品登録が完了しました。</h2>
+    <a href="{% url 'production_plan:product_create' %}" class="btn btn-secondary ml-2">続けて登録</a>
+</div>
+{% endblock %}
