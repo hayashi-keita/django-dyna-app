@@ -1,67 +1,73 @@
-{% extends 'base/base.html' %}
+    {% extends 'base/base.html' %}
 
-{% block title %}受注一覧{% endblock %}
+    {% block title %}受注一覧{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
-    <h1 class="mb-4">受注一覧</h1>
+    {% block content %}
+    <div class="container mt-4">
+        <h1 class="mb-4">受注一覧</h1>
 
-    <form method="get" class="mb-4">
-        <input type="text" name="customer" placeholder="得意先で検索" class="form-control" vallue="{{ request.GET.customer }}">
-        <button type="submit" class="btn btn-secondary mt-2">検索</button>
-    </form>
+        <form method="get" class="mb-4">
+            <input type="text" name="customer" placeholder="得意先で検索" class="form-control" vallue="{{ request.GET.customer }}">
+            <button type="submit" class="btn btn-secondary mt-2">検索</button>
+        </form>
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>注文No</th>
-                <th>得意先</th>
-                <th>受注区分</th>
-                <th>納期</th>
-                <th>作成日</th>
-                <th>状態</th>
-                <th>詳細</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for order in orders %}
-                {% for item in order.items.all %}
-                    <tr>
-                        <td>{{ item.customer_order_number }}</td>
-                        <td>{{ order.customer.name }}</td>
-                        <td>{{ item.get_order_type_display }}</td>
-                        <td>{{ item.delivery_date }}</td>
-                        <td>{{ order.created_at|date:'Y-m-d H:i' }}</td>
-                        <td>
-                            {% if item.is_process_expanded %}
-                                <span class="text-success">展開済</span>
-                            {% else %}
-                                <span class="text-danger">未展開</span>
-                            {% endif %}
-                        </td>
-                        <td><a href="{% url 'orders:order_detail' order.pk %}" class="btn btn-sm btn-info">詳細</a></td>
-                    </tr>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>受注No</th>
+                    <th>得意先</th>
+                    <th>製品名</th>
+                    <th>受注区分</th>
+                    <th>納期</th>
+                    <th>数量</th>
+                    <th>作成日</th>
+                    <th>状態</th>
+                    <th>リンク</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    {% for item in order.items.all %}
+                        <tr>
+                            <td>{{ order.order_number }}</td>
+                            <td>{{ order.customer.name }}</td>
+                            <td>{{ item.product }}</td>
+                            <td>{{ item.get_order_type_display }}</td>
+                            <td>{{ item.delivery_date }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ order.created_at|date:'Y-m-d H:i' }}</td>
+                            <td>
+                                {% for p in item.processes.all %}
+                                    {{ p.process.name }}: {{ p.get_status_display }}
+                                {% endfor %}
+                            </td>
+                            <td><a href="{% url 'orders:order_detail' order.pk %}" class="btn btn-sm btn-info">詳細</a></td>
+                        </tr>
+                    {% endfor %}
+                {% empty %}
+                    <tr><td colspan="6">受注はまだ登録されていません。</td></tr>
                 {% endfor %}
-            {% empty %}
-                <tr><td colspan="6">受注はまだ登録されていません。</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+        <form method="post" action="{% url 'production_plan:expand_all_processes' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-warning">一括工程展開</button>
+        </form>
+    </div>
 
-{% if is_paginated %}
-<nav>
-    <ul class="pagination">
-        {% if page_obj.has_previous %}
-            <li class="page-item"><a href="?page=1" class="page-link"></a>最初</li>
-            <li class="page-item"><a href="?page={{ page_obj.previous_page_number }}" class="page-link">前へ</a></li>
-        {% endif %}
-        <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
-        {% if page_obj.has_next %}
-            <li class="page-item"><a href="?page={{ page_obj.next_page_number }}" class="page-link">次へ</a></li>
-            <li class="page-item"><a href="?page={{ page_obj.pagenator.num_pages }}" class="page-link">最後</a></li>
-        {% endif %}
-    </ul>
-</nav>
-{% endif %}
-{% endblock %}
+    {% if is_paginated %}
+    <nav>
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li class="page-item"><a href="?page=1" class="page-link"></a>最初</li>
+                <li class="page-item"><a href="?page={{ page_obj.previous_page_number }}" class="page-link">前へ</a></li>
+            {% endif %}
+            <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+            {% if page_obj.has_next %}
+                <li class="page-item"><a href="?page={{ page_obj.next_page_number }}" class="page-link">次へ</a></li>
+                <li class="page-item"><a href="?page={{ page_obj.pagenator.num_pages }}" class="page-link">最後</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% endblock %}

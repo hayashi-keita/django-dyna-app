@@ -54,7 +54,7 @@ class ProcessDateListView(LoginRequiredMixin, View):
             'scheduled_dates': scheduled_dates,
         })
 
-# 作業日ごとのスケジュール（並び替え可能）
+# 作業日ごとのスケジュール（並び替え可能＆一括指示作成対応）
 class ScheduleByProcessDateView(LoginRequiredMixin, View):
     def get(self, request, pk, scheduled_date):
         process = get_object_or_404(Process, pk=pk)
@@ -62,28 +62,38 @@ class ScheduleByProcessDateView(LoginRequiredMixin, View):
             OrderItemProcess.objects
             .filter(process__pk=pk, planned_start=scheduled_date, status='planning')
             .select_related('order_item__order', 'order_item__product', 'process')
-            .order_by('display_order', 'id')
+            .order_by('display_order', 'pk')
         )
         return render(request, 'production_plan/schedule_by_process_date.html', {
             'schedules': schedules,
             'scheduled_date': scheduled_date,
             'process': process,
         })
-    
+    # 並び順更新
     def post(self, request, pk, scheduled_date):
+        action = request.POST.get('action')
         schedule_pks = request.POST.getlist('pks')
+        # まずは順番更新  
         for spk in schedule_pks:
             try:
-                process = get_object_or_404(OrderItemProcess, pk=pk)
+                process = get_object_or_404(OrderItemProcess, pk=spk)
                 new_order = int(request.POST.get(f'display_order_{spk}', process.display_order))
                 process.display_order = new_order
                 process.save()
             except (OrderItemProcess.DoesNotExist, ValueError):
                 continue
+        # 指示作成
+        if action == 'complete_all':
+            update_count = (
+                OrderItemProcess.objects
+                .filter(process__pk=pk, planned_start=scheduled_date, status='planning')
+                .update(status='complete')
+            )
+            messages.success(request, f'{scheduled_date}の差立中を{update_count}件、指示作成に変更しました。'
+                             )
+        return redirect('production_plan:schedule_by_process_date', pk=pk, scheduled_date=scheduled_date)
 
-        return redirect('production_plan:schedule_by_process_date', pk=pk, scheduled_data=scheduled_date)
-
-# ステータス変更処理
+# 差立解除処理
 class OrderItemProcessStatusUpdateView(LoginRequiredMixin, View):
     def post(self, request, pk):
         process = get_object_or_404(OrderItemProcess, pk=pk)

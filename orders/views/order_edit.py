@@ -28,7 +28,14 @@ class OrderUpdateView(LoginRequiredMixin, View):
 
         if order_form.is_valid() and formset.is_valid():
             order_form.save()
-            formset.save()
+            items = formset.save()  # 保存後に編集した OrderItem 一覧が取れる
+            # --- 編集後に工程を未展開に戻す処理 ---
+            for item in items:
+            # 削除されていない OrderItem に対してだけ処理
+                if not item.pk:
+                    continue
+                # --- 編集後に工程を未展開に戻す処理 ---
+                item.processes.update(status='pending', planned_start=None)
             return redirect('orders:order_detail', pk=order.pk)
         
         return render(request, 'orders/order_edit.html', {

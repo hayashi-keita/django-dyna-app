@@ -1,0 +1,38 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ scheduled_date }}の確定スケジュール{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ process.name }} - 作業日{{ scheduled_date }} 確定スケジュール</h2>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>順序</th>
+                <th>受注No</th>
+                <th>製品名</th>
+                <th>数量</th>
+                <th>納期</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for process in schedules %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ process.order_item.order.order_number }}</td>
+                <td>{{ process.order_item.product.name }}</td>
+                <td>{{ process.order_item.quantity}}</td>
+                <td>{{ process.order_item.delivery_date}}</td>
+            </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">指示作成データがありません。</td>
+                </tr>
+            {% endfor %}
+        </tbody>      
+    </table>
+</div>
+
+
+{% endblock %}

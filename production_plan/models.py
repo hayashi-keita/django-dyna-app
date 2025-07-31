@@ -29,7 +29,7 @@ class OrderItemProcess(models.Model):
         ('pending', '未展開'),
         ('draft', '予定作成'),
         ('planning', '差立中'),
-        ('completed', '指示作成'),
+        ('complete', '指示作成'),
     ]
     
     order_item = models.ForeignKey(OrderItem, on_delete=models.CASCADE, related_name='processes')

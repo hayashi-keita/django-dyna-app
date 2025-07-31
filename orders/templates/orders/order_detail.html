@@ -7,7 +7,8 @@
 
 <ul class="list-group mb-3">
     <li class="list-group-item"><strong>受注No：</strong>{{ order.order_number }}</li>
-    <li class="list-group-item"><strong>得意先：</strong>{{ order.customer }}</li>
+    <li class="list-group-item"><strong>得意先コード：</strong>{{ order.customer.code }}</li>
+    <li class="list-group-item"><strong>得意先名：</strong>{{ order.customer.name }}</li>
     <li class="list-group-item"><strong>作成日：</strong>{{ order.created_at }}</li>
     <li class="list-group-item"><strong>拠点：</strong>{{ order.location }}</li>
     <li class="list-group-item"><strong>作成者：</strong>{{ order.created_by }}</li>
@@ -16,7 +17,8 @@
 <table class="table">
     <thead>
         <tr>
-            <th>製品</th>
+            <th>製品コード</th>
+            <th>製品名</th>
             <th>受注区分</th>
             <th>納期</th>
             <th>納入時間</th>
@@ -28,7 +30,8 @@
 <tbody>
     {% for item in items %}
         <tr>
-            <td>{{ item.product }}</td>
+            <td>{{ item.product.code }}</td>
+            <td>{{ item.product.name }}</td>
             <td>{{ item.get_order_type_display }}</td>
             <td>{{ item.delivery_date }}</td>
             <td>{{ item.delivery_time }}</td>

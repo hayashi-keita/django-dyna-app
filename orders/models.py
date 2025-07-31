@@ -85,9 +85,6 @@ class OrderItem(models.Model):
     delivery_time = models.TimeField(null=True, blank=True, verbose_name='納入時間')
     quantity = models.PositiveIntegerField(verbose_name='数量')
 
-    @property
-    def is_process_expanded(self):
-        return self.processes.exists()
 
     def __str__(self):
         return f'{self.product.name} × {self.quantity} (注文No：{self.customer_order_number})'

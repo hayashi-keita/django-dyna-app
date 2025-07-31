@@ -1,7 +1,7 @@
 from django.urls import path
 from .views.product_create import ProductCreateView
-from .views.orderitem_process_create import OrderItemProcessCreateView
-from .views.process_all_list import AllOrderItemProcessListView, ProcessListView
+from .views.orderitem_process_create import OrderItemProcessCreateView, ExpandAllOrderItemProcessView
+from .views.process_all_list import AllOrderItemProcessListView, ProcessListView, CompleteProcessListView
 from .views.product_list import ProductListView
 from .views.product_update import ProductUpdateView
 from .views.product_schedule import OrderItemProcessCompleteView
@@ -20,7 +20,9 @@ urlpatterns = [
     path('process/<int:pk>/complete', OrderItemProcessCompleteView.as_view(), name='orderitem_process_complete'),
     path('orderitem_process/<int:pk>/plan/', OrderItemProcessPlanView.as_view(), name='orderitem_process_plan'),
     path('orderitem_process/<int:pk>/status/', OrderItemProcessStatusUpdateView.as_view(), name='status_update'),
+    path('orderitem_process/expand_all/', ExpandAllOrderItemProcessView.as_view(), name='expand_all_processes'),
     path('schedule/<int:pk>/dates/', ProcessDateListView.as_view(), name='process_date_list'),
     path('schedule/<int:pk>/process_date/<str:scheduled_date>/', ScheduleByProcessDateView.as_view(), name='schedule_by_process_date'),
+    path('schedule/<int:pk>/process_complete/<str:scheduled_date>/', CompleteProcessListView.as_view(), name='complete_process_list'),
     path('success/', lambda request: render(request, 'production_plan/success.html'), name='product_success'),
 ]
