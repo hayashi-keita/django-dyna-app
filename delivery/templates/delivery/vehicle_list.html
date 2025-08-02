@@ -1,0 +1,45 @@
+{% extends 'base/base.html' %}
+
+{% block title %}車両一覧{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>車両一覧</h2>
+    <a href="{% url 'delivery:vehicle_create' %}" class="btn btn-success mb-3">新規作成</a>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>車番</th>
+                <th>運転手</th>
+                <th>積載㎡</th>
+                <th>状態</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for v in vehicles %}
+                <tr>
+                    <td>{{ v.vehicle_number }}</td>
+                    <td>{{ v.driver_name }}</td>
+                    <td>{{ v.capacity }}</td>
+                    <td>
+                        {% if v.is_active %}
+                            <span class="badge bg-success">稼働中</span>
+                        {% else %}
+                            <span class="badge bg-secondary">停止中</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'delivery:vehicle_update' v.pk %}" class="btn btn-sm btn-warning">編集</a>
+                        <a href="{% url 'delivery:vehicle_delete' v.pk %}" class="btn btn-sm btn-danger">削除</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">登録されている車両はありません。</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

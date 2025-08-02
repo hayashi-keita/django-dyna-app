@@ -1,0 +1,15 @@
+{% extends 'base/base.html' %}
+
+{% block title %}車両登録{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ form.instance.pk|yesno:"車両編集,車両登録,車両登録"}}</h2>
+    <form method="post" class="card p-3 shadow-sm">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success mt-2">保存</button>
+        <a href="{% url 'delivery:vehicle_list' %}" class="btn btn-secondary">一覧へ戻る</a>
+    </form>
+</div>
+{% endblock %}

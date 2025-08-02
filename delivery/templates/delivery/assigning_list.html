@@ -1,0 +1,60 @@
+{% extends 'base/base.html' %}
+
+{% block title %}配車中一覧{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>配車中一覧（車両ごと）</h2>
+
+    {% for vehicle, schedules in vehicle_schedules %}
+        <h3 class="mt-4">
+        {{ vehicle.vehicle_number }}
+        {% if vehicle.driver_name %}
+            {{ vehicle.driver_name }}
+        {% endif%}
+        </h3>
+
+        {% if schedules %}
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>受注No</th>
+                        <th>製品名</th>
+                        <th>届先</th>
+                        <th>数量</th>
+                        <th>納期</th>
+                        <th>状態</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in schedules %}
+                        <tr>
+                            <td>{{ s.order_item.order.order_number }}</td>
+                            <td>{{ s.order_item.product.name }}</td>
+                            <td>{{ s.order_item.order.delivery.name }}</td>
+                            <td>{{ s.order_item.quantity }}</td>
+                            <td>{{ s.delivery_date|default:s.order_item.delivery_date }}</td>
+                            <td>{{ s.get_status_display }}</td>
+                            <td>
+                                <form method="post" action="{% url 'delivery:status_update' s.pk 'planned' %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button class="btn btn-primary">配車確定</button>
+                                </form>
+                                <form method="post" action="{% url 'delivery:status_update' s.pk 'dispatched' %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button class="btn btn-primary">出荷済</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>この車両に現在の配車中データはありません。</p>
+        {% endif %}
+    {% empty %}
+        <p>配車中データはありません。</p>
+    {% endfor %}
+</div>
+{% endblock %}

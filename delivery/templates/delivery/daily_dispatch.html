@@ -1,0 +1,58 @@
+{% extends 'base/base.html' %}
+
+{% block title %}日別配車{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ target_date }}</h2>
+
+    <form method="get">
+        <input type="date" name="date" value="{{ target_date }}">
+        <button type="submit">表示</button>
+    </form>
+
+    {% for vehicle, schedules in vehicle_schedules %}
+        <h3>{{ vehicle.name }}</h3>
+        {% if schedules %}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>注文No</th>
+                        <th>製品</th>
+                        <th>届先</th>
+                        <th>数量</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for s in schedules %}
+                        <tr>
+                            <td>{{ s.order_item.order.order_number }}</td>
+                            <td>{{ s.order_item.product.name }}</td>
+                            <td>{{ s.order_item.order.delivery.name }}</td>
+                            <td>{{ s.order_item.quantity }}</td>
+                            <td>
+                                <form method="post" action="{% url 'delivery:status_update' s.pk 'planned' %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit">配車確定</button>
+                                </form>
+                                <form method="post" action="{% url 'delivery:status_update' s.pk 'dispatched' %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit">出荷済</button>
+                                </form>
+                                <form method="post" action="{% url 'delivery:status_update' s.pk 'completed' %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit">納品完了</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>この車両の配送予定はありません。</p>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}

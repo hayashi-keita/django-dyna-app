@@ -1,0 +1,19 @@
+{% extends 'base/base.html' %}
+
+{% block title %}車両削除{% endblock %}
+
+{% block content%}
+<div class="container mt-4">
+    <div class="card shdow-sm p-4">
+        <h3 class="text-danger">本当に削除しますか？</h3>
+        <p>車両番号：<strong>{{ vehicle.vehicle_number }}</strong></p>
+        <p>ドライバー名：{{ vehicle.driver_name }}</p>
+
+        <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">削除する</button>
+        </form>
+        <a href="{% url 'delivery:vehicle_list' %}" class="btn btn-secondary">キャンセル</a>
+    </div>
+</div>
+{% endblock %}
