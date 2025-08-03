@@ -32,6 +32,9 @@
                     <td>
                         <a href="{% url 'delivery:vehicle_update' v.pk %}" class="btn btn-sm btn-warning">編集</a>
                         <a href="{% url 'delivery:vehicle_delete' v.pk %}" class="btn btn-sm btn-danger">削除</a>
+                        <a href="{% url 'delivery:assigning_vehicle_list' v.pk %}" class="btn btn-sm btn-primary">配車中一覧</a>
+                        <a href="{% url 'delivery:planned_vehicle_list' v.pk %}" class="btn btn-sm btn-primary">配車確定一覧</a>
+                        <a href="{% url 'delivery:dispatched_vehicle_list' v.pk %}" class="btn btn-sm btn-primary">出荷済一覧</a>
                     </td>
                 </tr>
             {% empty %}

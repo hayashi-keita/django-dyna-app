@@ -6,6 +6,7 @@
 <div class="container mt-4">
     <h2>未配車リスト</h2>
 
+
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
             <tr>
@@ -42,13 +43,13 @@
                             <input type="date" name="delivery_date" value="{{ s.order_item.delivery_date|date:'Y-m-d' }}">
                         </td>
                         <td>
-                            <button type="submit" class="btn btn-secondary">配車</button>
+                            <button type="submit" class="btn btn-success btn-sm">配車</button>
                         </td>
                     </form>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="7">未配車の注文明細はありません。</td>
+                    <td colspan="8">未配車の注文明細はありません。</td>
                 </tr>
             {% endfor %}
         </tbody>

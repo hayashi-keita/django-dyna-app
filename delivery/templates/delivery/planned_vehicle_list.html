@@ -1,0 +1,50 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ vehicle.vehicle_number }}配車確定一覧{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ vehicle.vehicle_number }} 配車確定一覧</h2>
+
+    <form method="post" action="{% url 'delivery:bulk_dispatch' vehicle.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary mb-2">
+            一括で出荷済に更新
+        </button>
+    </form>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>受注No</th>
+                <th>製品名</th>
+                <th>届先</th>
+                <th>数量</th>
+                <th>納期</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in schedules %}
+                <tr>
+                    <td>{{ s.order_item.order.order_number}}</td>
+                    <td>{{ s.order_item.product.name }}</td>
+                    <td>{{ s.order_item.order.delivery.name }}</td>
+                    <td>{{ s.order_item.quantity }}</td>
+                    <td>{{ s.order_item.delivery_date }}</td>
+                    <td>
+                        <form method="post" action="{% url 'delivery:status_update' s.pk 'dispatched' %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">出荷準備完了</button>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">この車両の出荷準備完了データはありません。</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

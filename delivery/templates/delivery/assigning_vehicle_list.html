@@ -1,0 +1,66 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}{{ vehicle.vehicle_number }}配車中一覧{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ vehicle.vehicle_number }} 配車中一覧</h2>
+
+    <form method="post" action="{% url 'delivery:bulk_confirm' vehicle.pk %}">
+        {% csrf_token %}
+        <button class="btn btn-success mb-3">一括配車確定</button>
+    </form>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>順番</th>
+                <th>受注No</th>
+                <th>製品名</th>
+                <th>届先</th>
+                <th>数量</th>
+                <th>納期</th>
+            </tr>
+        </thead>
+        <tbody id="schedule-body">
+            {% for s in schedules %}
+                <tr data-pk="{{ s.pk }}">
+                    <td>{{ s.sort_order }}</td>
+                    <td>{{ s.order_item.order.order_number}}</td>
+                    <td>{{ s.order_item.product.name }}</td>
+                    <td>{{ s.order_item.order.delivery.name }}</td>
+                    <td>{{ s.order_item.quantity }}</td>
+                    <td>{{ s.order_item.delivery_date }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">この車両の配車中データはありません。</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+    const tbody = document.getElementById('schedule-body');
+    new Sortable(tbody, {
+        animation: 150,
+        onEnd: function (evt) {
+            let order = [];
+            document.querySelectorAll('#schedule-body tr').forEach((row, index) => {
+                order.push({ pk: row.dataset.pk, sort_order: index + 1 });
+            });
+
+            fetch("{% url 'delivery:update_sort_order' vehicle.pk %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(order)
+            });
+        }
+    });
+</script>
+{% endblock %}
