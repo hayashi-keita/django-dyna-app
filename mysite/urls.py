@@ -24,4 +24,5 @@ urlpatterns = [
     path('orders/', include('orders.urls')),
     path('production_plan/', include('production_plan.urls')),
     path('delivery/', include('delivery.urls')),
+    path('colgate_schedule/', include('colgate_schedule.urls')),
 ]

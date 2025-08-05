@@ -1,0 +1,41 @@
+{% extends 'base/base.html' %}
+
+{% block title %}コルゲート計画{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>コルゲート製段計画</h2>
+
+    <form id="scheduleForm">
+        <div>
+            <label>計画日：</label>
+            <input type="date" id="planDate" value="{{ today|date:'Y-m-d' }}">
+        </div>
+        <div>
+            <label>フルート</label>
+            <select id="fluteSelect">
+                <option value="A">A段</option>
+                <option value="B">B段</option>
+                <option value="C">C段</option>
+                <option value="E">E段</option>
+                <option value="G">G段</option>
+                <option value="V">V段</option>
+                <option value="W">W段</option>
+            </select>
+        </div>
+        <button type="button" class="btn btn-success" onclick="goSchedule()">計画画面へ</button>
+    </form>
+</div>
+
+<script>
+function goSchedule() {
+    const date = document.getElementById('planDate').value;
+    const flute = document.getElementById('fluteSelect').value;
+    // Django の URL テンプレートに埋め込む
+    const urlTemplate = "{% url 'colgate_schedule:colgate_schedule' date_str='0000-00-00' flute='X' %}";
+    const url = urlTemplate.replace('0000-00-00', date).replace('X', flute);
+
+    window.location.href = url;
+}
+</script>
+{% endblock %}

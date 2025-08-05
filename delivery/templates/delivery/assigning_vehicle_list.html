@@ -49,6 +49,7 @@
         onEnd: function (evt) {
             let order = [];
             document.querySelectorAll('#schedule-body tr').forEach((row, index) => {
+                row.querySelector('td').innerText = index + 1;
                 order.push({ pk: row.dataset.pk, sort_order: index + 1 });
             });
 

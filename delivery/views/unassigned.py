@@ -1,5 +1,6 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 from django.views import View
 from django.utils.timezone import now
 from ..models import Vehicle, DeliverySchedule
@@ -17,7 +18,6 @@ class UnassignedListView(LoginRequiredMixin, View):
         # 日付で絞り込んだ未配車データ
         schedules = DeliverySchedule.objects.filter(
             status='unassigned',
-            order_item__delivery_date=target_date,
         ).select_related(
             'order_item__order', 'order_item__product',
         ).order_by('order_item__delivery_date')
@@ -30,3 +30,24 @@ class UnassignedListView(LoginRequiredMixin, View):
             'target_date': target_date,
         })
 
+class BulkAssignView(LoginRequiredMixin, View):
+    def post(self, request):
+        vehicle_pk = request.POST.get('vehicle')
+        delivery_date = request.POST.get('delivery_date')
+        schedule_pks = request.POST.getlist('schedule_pks')  # 複数取得
+
+        if not (vehicle_pk and delivery_date and schedule_pks):
+            messages.warning(request, '車両・日付・注文をすべて選択してください。')
+            return redirect('delivery:unassigned_list')
+        
+        vehicle = get_object_or_404(Vehicle, pk=vehicle_pk)
+        DeliverySchedule.objects.filter(
+            pk__in=schedule_pks,
+            status='unassigned',
+        ).update(
+            vehicle=vehicle,
+            delivery_date=delivery_date,
+            status='assigning',
+        )
+        messages.success(request, f'{len(schedule_pks)}件を{vehicle.vehicle_number}に配車しました。')
+        return redirect('delivery:unassigned_list')

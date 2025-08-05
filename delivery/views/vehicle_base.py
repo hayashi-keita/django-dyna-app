@@ -21,10 +21,26 @@ class VehicleBaseView(LoginRequiredMixin, View):
             'schedules': schedules,
         })
 
-# 車両ごとの配車中一覧
-class AssigningVehicleView(VehicleBaseView):
-    status_filter = 'assigning'
-    template_name = 'delivery/assigning_vehicle_list.html'
+# 配車中詳細
+class AssigningVehicleView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        vehicle = get_object_or_404(Vehicle, pk=pk)
+        target_date_str = request.GET.get('date')
+        schedules = DeliverySchedule.objects.filter(
+            vehicle=vehicle,
+            status='assigning',
+        )
+        if target_date_str:
+            schedules = schedules.filter(delivery_date=target_date_str)
+        
+        schedules = schedules.order_by('sort_order', 'pk')
+
+        return render(request, 'delivery/assigning_vehicle_list.html', {
+            'vehicle': vehicle,
+            'schedules': schedules,
+            'target_date': target_date_str,
+        })
+
 # 一括配車確定処理
 class BulkConfirmView(LoginRequiredMixin, View):
     def post(self, request, pk):

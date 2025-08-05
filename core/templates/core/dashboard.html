@@ -48,6 +48,17 @@
                 <h5 class="card-title">🚚 出荷画面</h5>
                 <p class="card-text">出荷予定や配車予定の確認</p>
                 <a href="{% url 'delivery:vehicle_list' %}" class="btn btn-success">車両一覧</a>
+                <a href="{% url 'delivery:unassigned_list' %}" class="btn btn-success">配車画面</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">📅 製段計画</h5>
+                <p class="card-text">コルゲート専用の製段計画画面</p>
+                <a href="{% url 'colgate_schedule:menu' %}" class="btn btn-success">計画画面</a>
             </div>
         </div>
     </div>

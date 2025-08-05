@@ -1,0 +1,63 @@
+{% extends 'base/base.html' %}
+
+{% block title %}製段計画{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ target_date }}{{ flute }}段 製段計画</h2>
+
+    <table class="table table-borderde table-striped">
+        <thead>
+            <tr>
+                <th>明細</th>
+                <th>製品コード</th>
+                <th>数量</th>
+                <th>取数</th>
+                <th>貼合m</th>
+                <th>反転</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in schedule_items %}
+            <tr id="row-{{ item.pk }}" {% if item.is_reversed %}style="background-color: #ffcccc;"{% endif %}>
+                <td>{{ item.process.pk }}</td>
+                <td>{{ item.process.order_item.product.code }}</td>
+                <td>{{ item.process.order_item.quantity }}</td>
+                <td>
+                    <input type="number" value="{{ item.take_count }}" min="1" max="6"
+                            onchange="updateTakeCount({{ item.pk }}, this.value)"> 
+                </td>
+                <td id="planned-{{ item.pk }}">{{ item.planned_m }}</td>
+                <td id="rev-{{ item.pk }}">{% if item.is_reversed %}⚠{% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+function updateTakeCount(itemPk, takeCount) {
+    fetch("{% url 'colgate_schedule:update_take_count' %}", {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},
+        body: JSON.stringify({'item_pk': itemPk, 'take_count': takeCount})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.error) return;
+        // 表示更新
+        document.getElementById('planned-' + itemPk).textContent = data.planned_m;
+        const row = document.getElementById('row-' + itemPk);
+        const rev = document.getElementById('rev-' + itemPk);
+
+        if (data.is_reversed) {
+            row.style.backgroundColor = '#ffcccc';
+            rev.textContent = '⚠';
+        } else {
+            row.style.backgroundColor = '';
+            rev.textContent = '';
+        }
+    });
+}
+</script>
+{% endblock %}

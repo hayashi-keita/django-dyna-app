@@ -23,6 +23,7 @@ class ProductProcess(models.Model):
     def __str__(self):
         return f'{self.product.code} - {self.sequence} - {self.process.name}'
 
+
 # 受注明細ごとの工程展開
 class OrderItemProcess(models.Model):
     STATUS_CHOICES = [

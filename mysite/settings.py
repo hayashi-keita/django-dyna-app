@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'production_plan.apps.ProductionPlanConfig',
     'core.apps.CoreConfig',
     'delivery.apps.DeliveryConfig',
+    'colgate_schedule.apps.ColgateScheduleConfig',
 ]
 
 MIDDLEWARE = [
